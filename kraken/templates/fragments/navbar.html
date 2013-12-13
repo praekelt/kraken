@@ -1,29 +1,29 @@
-      <div class="masthead">
-        <div class="row-fluid">
-            <div class="span10"><h3 class="muted"><img src="/static/images/kraken-logo64.png"/> The Kraken</h3></div>
-            <div class="span2 usermast text-right">{% if user.is_authenticated %}
-                <div class="btn-group text-left">
-                    <button class="btn">{{user.username}}</button>
-                    <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-                    <ul class="dropdown-menu">
-                          <li><a tabindex="-1" href="{% url 'accounts_profile' %}">Profile</a></li>
-                          <li><a tabindex="-1" href="{% url 'auth_logout' %}">Logout</a></li>
-                    </ul>
-                </div>{% endif %}
-            </div>
-        </div>
-        {% if user.is_authenticated %}
-        <div class="navbar">
-          <div class="navbar-inner">
-            <div class="container">
-              <ul class="nav">
-                <li {% if nav_active == "home" %}class="active"{% endif %}>
-                    <a href="/">Home</a></li>
-                <li {% if nav_active == "profiles" %}class="active"{% endif %}>
-                    <a href="/profile/">Profiles</a></li>
-              </ul>
-            </div>
-          </div>
-        </div><!-- /.navbar -->
-        {% endif %}
-      </div>
+<div class="masthead">
+<div class="row-fluid">
+    <div class="span10"><h3 class="muted"><img src="/static/images/kraken-logo64.png"/> The Kraken</h3></div>
+    <div class="span2 usermast text-right">{% if user.is_authenticated %}
+        <div class="btn-group text-left">
+            <button class="btn">{{user.username}}</button>
+            <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                  <li><a tabindex="-1" href="{% url 'accounts_profile' %}">Profile</a></li>
+                  <li><a tabindex="-1" href="{% url 'auth_logout' %}">Logout</a></li>
+            </ul>
+        </div>{% endif %}
+    </div>
+</div>
+{% if user.is_authenticated %}
+<div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <ul class="nav">
+        <li {% if nav_active == "home" %}class="active"{% endif %}>
+            <a href="/">Home</a></li>
+        <li {% if nav_active == "profiles" %}class="active"{% endif %}>
+            <a href="/profile/">Profiles</a></li>
+      </ul>
+    </div>
+  </div>
+</div><!-- /.navbar -->
+{% endif %}
+</div>

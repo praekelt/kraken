@@ -8,11 +8,21 @@ urlpatterns = patterns('',
     # Index
     url(r'^$', 'kraken.views.index', name='home'),
 
-    # Projects
+    # Profiles
     url(r'^profile/$', 'kraken.views.profile_index', name='profile_index'),
-    #url(r'^profile/create$', 'kraken.views.profiles_create', name='profiles_create'),
-    #url(r'^profile/edit/(?P<id>[\w-]+)$', 'kraken.views.profiles_edit', name='profiles_edit'),
-    #url(r'^profile/view/(?P<id>[\w-]+)$', 'kraken.views.profiles_view', name='profiles_view'),
+    url(r'^profile/create$', 'kraken.views.profile_create', name='profile_create'),
+    url(r'^profile/(?P<id>[\w-]+)/edit$', 'kraken.views.profile_edit', name='profile_edit'),
+    url(r'^profile/(?P<id>[\w-]+)$', 'kraken.views.profile_view', name='profile_view'),
+
+    url(r'^profile/(?P<id>[\w-]+)/add_agent$', 'kraken.views.profile_add_agent', name='profile_add_agent'),
+
+    url(r'^profile/(?P<id>[\w-]+)/add_request$', 'kraken.views.profile_add_request', name='profile_add_request'),
+    url(r'^profile/(?P<id>[\w-]+)/delete_request/(?P<rid>[\w-]+)$', 'kraken.views.profile_delete_request', name='profile_delete_request'),
+
+    url(r'^profile/(?P<id>[\w-]+)/run$', 'kraken.views.profile_run', name='profile_run'),
+
+    # Agents
+    url(r'^agent/create/(?P<id>[\w-]+)$', 'kraken.views.agent_create', name='agent_create'),
 
     # Authentication
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
