@@ -1,0 +1,47 @@
+{% load crispy_forms_tags %}
+{% include "fragments/head.html" with nav_active="profiles" %}
+
+<div class="row-fluid"><div class="span9">
+    <h4 style="margin-bottom:10px">Add request to {{profile.name}}</h4>
+        {% crispy form %}
+</div></div>
+
+<script type="text/javascript">
+    $(function () {
+        function authChanged(){
+            var authval = $("#id_http_auth").is(':checked');
+            if (authval) {
+                $("#div_id_username").show();
+                $("#div_id_password").show();
+            }
+            else {
+                $("#div_id_username").hide();
+                $("#div_id_password").hide();
+            }
+        }
+
+        function methodChanged(){
+            var method = $("#id_method").val();
+            if (method == "POST") {
+                $("#div_id_content").show()
+                $("#div_id_content_type").show();
+            }
+            else {
+                $("#div_id_content").hide()
+                $("#div_id_content_type").hide();
+            }
+        }
+
+        $("#id_method").change(methodChanged);
+
+        $("#id_http_auth").change(authChanged);
+
+        $("#div_id_username").hide();
+        $("#div_id_password").hide();
+
+        $("#div_id_content_type").hide();
+        $("#div_id_content").hide();
+    });
+</script>
+
+{% include "fragments/foot.html" %}
