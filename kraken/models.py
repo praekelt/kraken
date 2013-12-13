@@ -31,7 +31,7 @@ class Request(models.Model):
     password = models.CharField(max_length=255, null=True)
 
     method = models.CharField(max_length=5)
-    content = models.Charfield(max_length=255)
+    content = models.CharField(max_length=255)
 
 class Test(models.Model):
     profile = models.ForeignKey(Profile)

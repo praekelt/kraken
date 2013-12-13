@@ -5,6 +5,7 @@ import models
 
 
 class UserForm(forms.ModelForm):
+    password = forms.CharField(required=False, widget=forms.PasswordInput)
     class Meta:
         model = User
         exclude = (
@@ -32,7 +33,7 @@ class ProfileRequest(forms.Form):
     path = forms.CharField(required=True, initial="/")
     think_time = forms.IntegerField(initial="1")
 
-    method =
+    method = forms.CharField(required=True, initial="GET")
 
     http_auth = forms.BooleanField(required=False)
     csrf_auth = forms.BooleanField(required=False)
