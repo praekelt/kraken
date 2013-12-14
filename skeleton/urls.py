@@ -21,6 +21,11 @@ urlpatterns = patterns('',
 
     url(r'^profile/(?P<id>[\w-]+)/run$', 'kraken.views.profile_run', name='profile_run'),
 
+    # Servers
+    url(r'^servers/$', 'kraken.views.server_index', name='server_index'),
+    url(r'^servers/create$', 'kraken.views.server_create', name='server_create'),
+    url(r'^servers/(?P<id>[\w-]+)/edit$', 'kraken.views.server_edit', name='server_edit'),
+
     # Agents
     url(r'^agent/create/(?P<id>[\w-]+)$', 'kraken.views.agent_create', name='agent_create'),
 

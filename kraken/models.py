@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class Server(models.Model):
+    hostname = models.CharField(max_length=255, unique=True)
+    cores = models.IntegerField()
+
 class Profile(models.Model):
     name = models.CharField(max_length=255, unique=True)
     url = models.CharField(max_length=255)

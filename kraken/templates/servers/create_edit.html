@@ -1,0 +1,9 @@
+{% load crispy_forms_tags %}
+{% include "fragments/head.html" with nav_active="servers" %}
+
+<div class="row-fluid"><div class="span9">
+    <h4 style="margin-bottom:10px">{% if profile %}Edit Server{% else %}Create Server{% endif %}</h4>
+        {% crispy form %}
+</div></div>
+
+{% include "fragments/foot.html" %}

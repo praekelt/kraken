@@ -1,0 +1,21 @@
+{% include "fragments/head.html" with nav_active="servers" %}
+
+<div class="row-fluid"><div class="span9"><h4>Servers</h4><p>
+    <a href="{% url 'server_create' %}" class="btn btn-small btn-success">Create new</a>
+    <table class="table table-hover table-bordered table-condensed">
+        <tbody>
+            {% for server in servers %}
+            <tr>
+                <td width="100%">{{ server.hostname }}</td>
+                <td>
+                    <div class="btn-group">
+                        <a class="btn" href="{% url 'server_edit' id=server.id %}" title="Edit"><i class="icon-edit"></i></a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</p></div></div>
+
+{% include "fragments/foot.html" %}

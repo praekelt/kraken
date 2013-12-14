@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 
-from kraken.models import Profile, UserAgents, UserAgent, Request, Test
+from kraken.models import Profile, UserAgents, UserAgent, Request, Test, Server
 from kraken import forms
 
 from lxml import etree
@@ -33,6 +33,51 @@ def accounts_profile(request):
     return render(request, "accounts_profile.html", {
         'form': form
     })
+
+@login_required
+def server_index(request):
+    servers = Server.objects.all()
+
+    return render(request, "servers/index.html", {
+        'servers': servers
+    })
+
+@login_required
+def server_create(request):
+    if request.method == "POST":
+        form = forms.ServerForm(request.POST)
+        if form.is_valid():
+            server = form.save(commit=False)
+            server.save()
+
+            return redirect('server_index')
+    else:
+        form = forms.ServerForm()
+
+    return render(request, "servers/create_edit.html", {
+        'form': form
+    })
+
+@login_required
+def server_edit(request, id):
+    server = Server.objects.get(id=id)
+
+    if request.method == "POST":
+        form = forms.ServerForm(request.POST, instance=server)
+        if form.is_valid():
+            server = form.save(commit=False)
+            server.save()
+
+            return redirect('server_index')
+    else:
+        form = forms.ServerForm(instance=server)
+
+    return render(request, "servers/create_edit.html", {
+        'form': form,
+        'server': server
+    })
+
+
 
 @login_required
 def agent_create(request, id):
@@ -162,7 +207,25 @@ def profile_run(request, id):
     sessions = etree.SubElement(root, 'sessions')
 
     # Setup clients - this really needs to be configurable for clusters etc.
-    clients.append(etree.Element('client', host="localhost", cpu="4"))
+    server_list = Server.objects.all()
+    for server in server_list:
+        clients.append(etree.Element('client', host=server.hostname,
+            cpu=str(server.cores)))
+
+    # Setup target server
+    profile_server = urlparse.urlparse(profile.url)
+    port = profile_server.port
+    # but urlparse is retarded...
+    if not port:
+        if profile_server.scheme == 'http':
+            port = 80
+        elif profile_server.scheme == 'https':
+            port = 443
+        else:
+            raise Exception('This is for testing webservers...')
+
+    server = etree.SubElement(servers, 'server', host=profile_server.hostname,
+        port=str(port), type="tcp")
 
     # Setup load phase (just one for now)
     arivalphase = etree.SubElement(load, 'arrivalphase', phase="1",
@@ -182,10 +245,9 @@ def profile_run(request, id):
         option.append(agent_tag)
 
     # Setup requests
-    session = etree.SubElement(sessions, 'session')
+    session = etree.SubElement(sessions, 'session', name=profile.name.lower(), probability='100', type='ts_http')
     first_request = True
     for prequest in profile.request_set.all():
-        think_tag = etree.Element('think_time', random='true', value=str(prequest.think_time))
         request_tag = etree.Element('request')
 
         if first_request:
@@ -204,7 +266,7 @@ def profile_run(request, id):
             request_tag.append(
                 etree.Element('http', url=url, version='1.1', method='POST', 
                     content_type=prequest.content_type, 
-                    content=prequest.content
+                    contents=prequest.content
                 )
             )
         else:
@@ -212,10 +274,15 @@ def profile_run(request, id):
                 etree.Element('http', url=url, version='1.1', method=prequest.method)
             )
 
-        session.append(think_tag)
+        if prequest.think_time:
+            think_tag = etree.Element('thinktime', random='true', 
+                value=str(prequest.think_time))
+            session.append(think_tag)
+
         session.append(request_tag)
     
     return HttpResponse(
-        etree.tostring(root, pretty_print=True),
+        etree.tostring(root, pretty_print=True, 
+            doctype='<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">'),
         content_type="text/plain"
     )

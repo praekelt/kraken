@@ -14,6 +14,15 @@ class UserForm(forms.ModelForm):
             'last_login', 'date_joined', 'groups', 'user_permissions'
         )
 
+class ServerForm(forms.ModelForm):
+    cores = forms.IntegerField(initial=2, help_text = "Number of CPU cores")
+    helper = FormHelper()
+    helper.form_class = 'form-horizontal'
+    helper.add_input(Submit('submit', 'Submit'))
+
+    class Meta:
+        model = models.Server
+
 class ProfileForm(forms.ModelForm):
     url = forms.CharField(required=True, initial="http://")
     phase_duration = forms.IntegerField(initial=5, help_text = "Minutes")
