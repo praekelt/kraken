@@ -59,3 +59,6 @@ class Test(models.Model):
     running = models.BooleanField()
 
     task_id = models.CharField(max_length=255, default='')
+
+    test_log = models.TextField(default="")
+    stdout = models.TextField(default="")

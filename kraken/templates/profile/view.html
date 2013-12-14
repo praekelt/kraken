@@ -31,7 +31,10 @@
                 <tbody>
                     {% for request in profile.request_set.all %} 
                         <tr><td>{{request.path}}</td><td>{{request.method}}</td><td>
-                        <a class="btn" href="{% url 'profile_delete_request' id=profile.id rid=request.id%}" title="Temove"><i class="icon-trash"></i></a>
+                        <div class="btn-group">
+                            <a class="btn" href="{% url 'profile_delete_request' id=profile.id rid=request.id%}" title="Remove"><i class="icon-trash"></i></a>
+                            <a class="btn" href="{% url 'profile_edit_request' id=profile.id rid=request.id%}" title="Edit"><i class="icon-edit"></i></a>
+                        </div>
                         </td></tr>
                     {% endfor %} 
                 </tbody>

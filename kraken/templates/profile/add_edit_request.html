@@ -2,7 +2,7 @@
 {% include "fragments/head.html" with nav_active="profiles" %}
 
 <div class="row-fluid"><div class="span9">
-    <h4 style="margin-bottom:10px">Add request to {{profile.name}}</h4>
+    <h4 style="margin-bottom:10px">{% if prequest %}Edit request for{% else %}Add request to{% endif %} {{profile.name}}</h4>
         {% crispy form %}
 </div></div>
 
@@ -36,11 +36,9 @@
 
         $("#id_http_auth").change(authChanged);
 
-        $("#div_id_username").hide();
-        $("#div_id_password").hide();
+        authChanged();
+        methodChanged();
 
-        $("#div_id_content_type").hide();
-        $("#div_id_content").hide();
     });
 </script>
 

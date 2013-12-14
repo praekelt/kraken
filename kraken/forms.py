@@ -64,12 +64,9 @@ class ProfileUserAgentForm(forms.ModelForm):
         model = models.UserAgent
         exclude = ('profile')
 
-class ProfileRequest(forms.Form):
-    def __init__(self, profile, *args, **kwargs):
-        super(ProfileRequest, self).__init__(*args, **kwargs)
-        self.profile = profile
-
+class ProfileRequest(forms.ModelForm):
     class Meta:
+        model = models.Request
         exclude = ('profile')
 
     path = forms.CharField(required=True, initial="/")

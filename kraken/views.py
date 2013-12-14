@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 
 from kraken.models import Profile, UserAgents, UserAgent, Request, Test, Server
-from kraken import forms
+from kraken import forms, tasks
 
 from lxml import etree
 import urlparse
@@ -114,38 +114,44 @@ def profile_view(request, id):
 
 @login_required
 def profile_add_request(request, id):
-    profile = Profile.objects.get(id=id)
 
     if request.method == "POST":
-        form = forms.ProfileRequest(profile, request.POST)
+        profile = Profile.objects.get(id=id)
+        form = forms.ProfileRequest(request.POST)
         if form.is_valid():
-            pr_form = form.cleaned_data
-
-            print pr_form
-
-            profile_request = Request.objects.create(
-                profile=profile,
-                http_auth=pr_form['http_auth'],
-                path=pr_form['path'],
-                think_time=pr_form['think_time'],
-                username=pr_form['username'],
-                password=pr_form['password'],
-                method=pr_form['method'],
-                content=pr_form['content'],
-                content_type=pr_form['content_type'],
-                dyn_variable=pr_form['dyn_variable']
-            )
-
-            profile_request.save()
+            prequest = form.save(commit=False)
+            prequest.profile = profile
+            prequest.save()
 
             return redirect('profile_view', id=id)
     else:
-        form = forms.ProfileRequest(profile)
+        form = forms.ProfileRequest()
 
-    return render(request, "profile/add_request.html", {
+    return render(request, "profile/add_edit_request.html", {
         'profile': profile, 
         'form': form
     })
+
+@login_required
+def profile_edit_request(request, id, rid):
+    prequest = Request.objects.get(id=rid)
+
+    if request.method == "POST":
+        form = forms.ProfileRequest(request.POST, instance=prequest)
+        if form.is_valid():
+            prequest = form.save(commit=False)
+            prequest.save()
+
+            return redirect('profile_view', id=id)
+    else:
+        form = forms.ProfileRequest(instance=prequest)
+
+    return render(request, "profile/add_edit_request.html", {
+        'profile': prequest.profile,
+        'prequest': prequest,
+        'form': form
+    })
+
 
 @login_required
 def profile_delete_request(request, id, rid):
@@ -174,8 +180,22 @@ def profile_add_agent(request, id):
     })
 
 @login_required
-def profile_edit(request):
-    return render(request, "profile/create_edit.html")
+def profile_edit(request, id):
+    profile = Profile.objects.get(id=id)
+    if request.method == "POST":
+        form = forms.ProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.save()
+
+            return redirect('profile_index')
+
+    else:
+        form = forms.ProfileForm(instance=profile)
+
+    return render(request, 'profile/create_edit.html', {
+        'form': form
+    })
 
 @login_required
 def profile_create(request):
@@ -197,6 +217,11 @@ def profile_create(request):
 @login_required
 def profile_run(request, id):
     profile = Profile.objects.get(id=id)
+
+    test = Test.objects.create(
+        profile=profile,
+        running=False
+    )
 
     # Build test doc structure
     root = etree.Element("tsung", loglevel="notice", version="1.0")
@@ -280,9 +305,11 @@ def profile_run(request, id):
             session.append(think_tag)
 
         session.append(request_tag)
+
+    task = tasks.run_test.delay(test, etree.tostring(root, pretty_print=True, 
+            doctype='<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">'))
+
+    test.task_id = task.task_id
+    test.save()
     
-    return HttpResponse(
-        etree.tostring(root, pretty_print=True, 
-            doctype='<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">'),
-        content_type="text/plain"
-    )
+    return redirect('profile_index')
