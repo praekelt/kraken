@@ -1,65 +1,90 @@
 {% include "fragments/head.html" with nav_active="profiles" %}
 
-<div class="row-fluid">
-    <div class="span9">
-        <h4>Similtaneous Users</h4>
-        <div id="sessions" ><svg style="height: 300px;"></svg></div>
-    </div>
-</div>
+<h4>Similtaneous Users</h4>
+<div id="sessions" ><svg style="height: 400px;"></svg></div>
+
+<h4>Response codes</h4>
+<div id="codes" ><svg style="height: 400px;"></svg></div>
 
 
 
 <script src="/static/d3/d3.v3.min.js"></script>
 <script src="/static/nvd3/nv.d3.min.js"></script>
 <script>
-    var chart;
 
     var report_data = {{test.test_log|safe}};
 
-    function getDataKey(key, label, color, selector){
+    function defaultSelector(i, l){
+        return i[0];
+    }
+
+    function gaugeSelector(i, l){
+        return i[0]+l;
+    }
+
+    function getDataKey(key, label, selector){
         // Pulls data out of the test report JSON structure and reformats to D3
+        // takes a selector function to accumulate data, provides current and last
         var data = report_data['data'][key];
 
         var d3data = []
+        var last = 0;
         for (var i = 0; i < data.length; i++){
-            d3data.push({
-                x: data[i][0],
-                y: selector(data[i][1])
-            });
+            var y = selector(data[i][1], last);
+            last = y;
+            d3data.push(
+                {x: data[i][0], y: y}
+            );
         }
 
         return {
             values: d3data,
-            key: label,
-            color: color
+            key: label
         };
     }
 
-    nv.addGraph(function() {
-      chart = nv.models.lineChart().options({
+    var options = {
         margin: {left: 100, bottom: 100},
         //x: function(d,i) { return i},
         showXAxis: true,
         showYAxis: true,
         transitionDuration: 250
-      });
+    }
 
+    // Session graph
+    nv.addGraph(function() {
+        var chart;
+      chart = nv.models.lineChart().options(options);
       chart.xAxis.axisLabel("Time (s)");
-
       chart.yAxis.axisLabel('Sessions');
-
       d3.select('#sessions svg').datum([
-        getDataKey('users', 'Users', '#ff7f0e', function(i){return i[0]}),
-        getDataKey('connected', 'Sessions', '#ff7fff', function(i){return Math.abs(i[0])})
-      ]).call(chart);
-
-      nv.utils.windowResize(chart.update);
-
-      //chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
-
+        getDataKey('users', 'Users', defaultSelector),
+        getDataKey('connected', 'Sessions', gaugeSelector)
+      ]).transition().duration(500).call(chart);
+      nv.utils.windowResize(function() { d3.select('#codes svg').call(chart) });
       return chart;
     });
-     
+    
+    // Response code graph
+    nv.addGraph(function() {
+        var chart;
+      chart = nv.models.lineChart().options(options);
+      chart.xAxis.axisLabel("Time (s)");
+      chart.yAxis.axisLabel('Sessions');
 
+      var data = [];
+      for (var k in report_data['data']) {
+        if (parseInt(k)) { 
+            data.push(
+                getDataKey(k, k, defaultSelector)
+            );
+        }
+      }
+
+      d3.select('#codes svg').datum(data).transition().duration(500).call(chart);
+      nv.utils.windowResize(function() { d3.select('#codes svg').call(chart) });
+      return chart;
+    });
+ 
 </script>
 {% include "fragments/foot.html" %}
