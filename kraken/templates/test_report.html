@@ -6,7 +6,8 @@
 <h4>Response codes</h4>
 <div id="codes" ><svg style="height: 400px;"></svg></div>
 
-
+<h4>Response times</h4>
+<div id="speed" ><svg style="height: 400px;"></svg></div>
 
 <script src="/static/d3/d3.v3.min.js"></script>
 <script src="/static/nvd3/nv.d3.min.js"></script>
@@ -53,7 +54,7 @@
 
     // Session graph
     nv.addGraph(function() {
-        var chart;
+      var chart;
       chart = nv.models.lineChart().options(options);
       chart.xAxis.axisLabel("Time (s)");
       chart.yAxis.axisLabel('Sessions');
@@ -61,16 +62,31 @@
         getDataKey('users', 'Users', defaultSelector),
         getDataKey('connected', 'Sessions', gaugeSelector)
       ]).transition().duration(500).call(chart);
-      nv.utils.windowResize(function() { d3.select('#codes svg').call(chart) });
+      nv.utils.windowResize(function() { d3.select('#sessions svg').call(chart) });
+      return chart;
+    });
+ 
+    // Connection rates etc
+    nv.addGraph(function() {
+      var chart;
+      chart = nv.models.lineChart().options(options);
+      chart.xAxis.axisLabel("Time (s)");
+      chart.yAxis.axisLabel('msec').tickFormat(d3.format('.02f'));
+      d3.select('#speed svg').datum([
+        getDataKey('request', 'Request', function(i,l){return i[1]}),
+        getDataKey('connect', 'Connect', function(i,l){return i[1]}),
+        getDataKey('page', 'Transaction', function(i,l){return i[1]})
+      ]).transition().duration(500).call(chart);
+      nv.utils.windowResize(function() { d3.select('#speed svg').call(chart) });
       return chart;
     });
     
     // Response code graph
     nv.addGraph(function() {
-        var chart;
+      var chart;
       chart = nv.models.lineChart().options(options);
       chart.xAxis.axisLabel("Time (s)");
-      chart.yAxis.axisLabel('Sessions');
+      chart.yAxis.axisLabel('Count/sec');
 
       var data = [];
       for (var k in report_data['data']) {
