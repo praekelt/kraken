@@ -180,6 +180,14 @@ def profile_add_agent(request, id):
     })
 
 @login_required
+def test_report(request, id):
+    test = Test.objects.get(id=id)
+
+    return render(request, "test_report.html", {
+        'test': test
+    })
+
+@login_required
 def profile_edit(request, id):
     profile = Profile.objects.get(id=id)
     if request.method == "POST":

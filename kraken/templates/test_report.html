@@ -1,0 +1,65 @@
+{% include "fragments/head.html" with nav_active="profiles" %}
+
+<div class="row-fluid">
+    <div class="span9">
+        <h4>Similtaneous Users</h4>
+        <div id="sessions" ><svg style="height: 300px;"></svg></div>
+    </div>
+</div>
+
+
+
+<script src="/static/d3/d3.v3.min.js"></script>
+<script src="/static/nvd3/nv.d3.min.js"></script>
+<script>
+    var chart;
+
+    var report_data = {{test.test_log|safe}};
+
+    function getDataKey(key, label, color, selector){
+        // Pulls data out of the test report JSON structure and reformats to D3
+        var data = report_data['data'][key];
+
+        var d3data = []
+        for (var i = 0; i < data.length; i++){
+            d3data.push({
+                x: data[i][0],
+                y: selector(data[i][1])
+            });
+        }
+
+        return {
+            values: d3data,
+            key: label,
+            color: color
+        };
+    }
+
+    nv.addGraph(function() {
+      chart = nv.models.lineChart().options({
+        margin: {left: 100, bottom: 100},
+        //x: function(d,i) { return i},
+        showXAxis: true,
+        showYAxis: true,
+        transitionDuration: 250
+      });
+
+      chart.xAxis.axisLabel("Time (s)");
+
+      chart.yAxis.axisLabel('Sessions');
+
+      d3.select('#sessions svg').datum([
+        getDataKey('users', 'Users', '#ff7f0e', function(i){return i[0]}),
+        getDataKey('connected', 'Sessions', '#ff7fff', function(i){return Math.abs(i[0])})
+      ]).call(chart);
+
+      nv.utils.windowResize(chart.update);
+
+      //chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+
+      return chart;
+    });
+     
+
+</script>
+{% include "fragments/foot.html" %}

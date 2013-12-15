@@ -33,6 +33,9 @@ class UserAgent(models.Model):
     def __str__(self):
         return self.__unicode__().encode('utf-8', 'replace')
 
+    class Meta:
+        ordering = ['probability']
+
 class Request(models.Model):
     profile = models.ForeignKey(Profile)
 
@@ -52,6 +55,10 @@ class Request(models.Model):
 
     content_type = models.CharField(max_length=255)
 
+    class Meta:
+        ## XXX need an ordering field for requests
+        ordering = ['id']
+
 class Test(models.Model):
     profile = models.ForeignKey(Profile)
     test_time = models.DateTimeField(auto_now_add=True)
@@ -62,3 +69,6 @@ class Test(models.Model):
 
     test_log = models.TextField(default="")
     stdout = models.TextField(default="")
+
+    class Meta:
+        ordering = ['-test_time']
