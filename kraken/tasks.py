@@ -30,7 +30,7 @@ def run_test(test, test_xml):
     
     # Execute tsung
     test_runner = subprocess.Popen(args,
-        stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env={"HOME":os.getcwd()})
     test_runner.wait()
 
     test.stdout = test_runner.stdout.read()
