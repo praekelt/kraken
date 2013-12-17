@@ -320,4 +320,4 @@ def profile_run(request, id):
     test.task_id = task.task_id
     test.save()
     
-    return redirect('profile_index')
+    return redirect('profile_view', id=id)

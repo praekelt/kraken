@@ -2,6 +2,8 @@
 <div class="row-fluid">
     <div class="span9">
         <h3>{{profile.name}}</h3>
+        <a href="{% url 'profile_run' id=profile.id %}" class="btn btn-danger">Release the Kraken!</a>
+        <br/><br/>
     </div>
 </div>
 
