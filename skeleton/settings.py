@@ -144,7 +144,7 @@ INSTALLED_APPS = (
     #'raven.contrib.django.raven_compat',
     'djcelery',
     'djcelery_email',
-    #'social_auth',
+    'social_auth',
     'debug_toolbar',
     'crispy_forms',
     'kraken',
