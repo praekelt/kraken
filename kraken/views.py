@@ -114,9 +114,9 @@ def profile_view(request, id):
 
 @login_required
 def profile_add_request(request, id):
+    profile = Profile.objects.get(id=id)
 
     if request.method == "POST":
-        profile = Profile.objects.get(id=id)
         form = forms.ProfileRequest(request.POST)
         if form.is_valid():
             prequest = form.save(commit=False)
