@@ -18,6 +18,10 @@ urlpatterns = patterns('',
 
     url(r'^profile/(?P<id>[\w-]+)/add_request$', 'kraken.views.profile_add_request', name='profile_add_request'),
     url(r'^profile/(?P<id>[\w-]+)/edit_request/(?P<rid>[\w-]+)$', 'kraken.views.profile_edit_request', name='profile_edit_request'),
+
+    url(r'^profile/(?P<id>[\w-]+)/up_request/(?P<rid>[\w-]+)$', 'kraken.views.profile_up_request', name='profile_up_request'),
+    url(r'^profile/(?P<id>[\w-]+)/down_request/(?P<rid>[\w-]+)$', 'kraken.views.profile_down_request', name='profile_down_request'),
+
     url(r'^profile/(?P<id>[\w-]+)/delete_request/(?P<rid>[\w-]+)$', 'kraken.views.profile_delete_request', name='profile_delete_request'),
 
     url(r'^profile/(?P<id>[\w-]+)/run$', 'kraken.views.profile_run', name='profile_run'),

@@ -55,9 +55,10 @@ class Request(models.Model):
 
     content_type = models.CharField(max_length=255)
 
+    order = models.IntegerField(default=0)
+
     class Meta:
-        ## XXX need an ordering field for requests
-        ordering = ['id']
+        ordering = ['order']
 
 class Test(models.Model):
     profile = models.ForeignKey(Profile)

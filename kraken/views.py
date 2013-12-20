@@ -121,6 +121,15 @@ def profile_add_request(request, id):
         if form.is_valid():
             prequest = form.save(commit=False)
             prequest.profile = profile
+
+            rs = Request.objects.filter(profile=profile).order_by('-order')
+            if rs:
+                last_order = rs[0].order
+            else:
+                last_order = 0
+            
+            prequest.order = last_order + 1
+
             prequest.save()
 
             return redirect('profile_view', id=id)
@@ -156,6 +165,36 @@ def profile_edit_request(request, id, rid):
 @login_required
 def profile_delete_request(request, id, rid):
     Request.objects.get(id=rid).delete()
+
+    return redirect('profile_view', id=id)
+
+@login_required
+def profile_down_request(request, id, rid):
+    req = Request.objects.get(id=rid)
+    profile = Profile.objects.get(id=id)
+    rs = Request.objects.filter(profile=profile, order__gt=req.order)
+    if rs:
+        rs = rs.order_by('order')[0]
+        this_order = req.order
+        req.order = rs.order
+        rs.order = this_order
+        req.save()
+        rs.save()
+
+    return redirect('profile_view', id=id)
+
+@login_required
+def profile_up_request(request, id, rid):
+    req = Request.objects.get(id=rid)
+    profile = Profile.objects.get(id=id)
+    rs = Request.objects.filter(profile=profile, order__lt=req.order)
+    if rs:
+        rs = rs.order_by('-order')[0]
+        this_order = req.order
+        req.order = rs.order
+        rs.order = this_order
+        req.save()
+        rs.save()
 
     return redirect('profile_view', id=id)
 

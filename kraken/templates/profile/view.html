@@ -32,10 +32,12 @@
                 <thead><tr><th>Request</th><th>Method</th><th></th></tr></thead>
                 <tbody>
                     {% for request in profile.request_set.all %} 
-                        <tr><td>{{request.path}}</td><td>{{request.method}}</td><td>
+                        <tr><td>{{request.path}}</td><td>{{request.method}}</td><td width="155em">
                         <div class="btn-group">
-                            <a class="btn" href="{% url 'profile_delete_request' id=profile.id rid=request.id%}" title="Remove"><i class="icon-trash"></i></a>
+                            <a class="btn" href="{% url 'profile_up_request' id=profile.id rid=request.id%}" title="Up"><i class="icon-arrow-up"></i></a>
+                            <a class="btn" href="{% url 'profile_down_request' id=profile.id rid=request.id%}" title="Down"><i class="icon-arrow-down"></i></a>
                             <a class="btn" href="{% url 'profile_edit_request' id=profile.id rid=request.id%}" title="Edit"><i class="icon-edit"></i></a>
+                            <a class="btn" href="{% url 'profile_delete_request' id=profile.id rid=request.id%}" title="Remove"><i class="icon-trash"></i></a>
                         </div>
                         </td></tr>
                     {% endfor %} 

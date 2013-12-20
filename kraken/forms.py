@@ -67,7 +67,7 @@ class ProfileUserAgentForm(forms.ModelForm):
 class ProfileRequest(forms.ModelForm):
     class Meta:
         model = models.Request
-        exclude = ('profile')
+        exclude = ('profile', 'order')
 
     path = forms.CharField(required=True, initial="/")
     think_time = forms.IntegerField(initial="1")
