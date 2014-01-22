@@ -13,7 +13,7 @@ def run_test(test, test_xml):
     profile = test.profile
     now = time.strftime("%Y%m%d-%H%M")
 
-    fname = '%s-%s' % (profile.name.lower(), now)
+    fname = '%s-%s' % (profile.name.lower().replace(' ', '_'), now)
 
     testfile = '/tmp/%s.xml' % fname
     testlog = '/tmp/%s/' % fname
