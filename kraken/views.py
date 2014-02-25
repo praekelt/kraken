@@ -281,8 +281,12 @@ def profile_run(request, id):
     # Setup clients - this really needs to be configurable for clusters etc.
     server_list = Server.objects.all()
     for server in server_list:
-        clients.append(etree.Element('client', host=server.hostname,
-            cpu=str(server.cores)))
+        clients.append(etree.Element('client',
+            host=server.hostname,
+            cpu=str(server.cores),
+            maxusers="10000",
+            weight="1"
+        ))
 
     # Setup target server
     profile_server = urlparse.urlparse(profile.url)
