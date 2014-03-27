@@ -82,6 +82,8 @@ class ProfileRequest(forms.ModelForm):
     content_type = forms.CharField(required=False)
 
     dyn_variable = forms.CharField(required=False)
+    dyn_variable_attr = forms.CharField(required=False)
+    dyn_variable_attr_value = forms.CharField(required=False)
 
     http_auth = forms.BooleanField(required=False)
 
