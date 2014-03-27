@@ -1,11 +1,12 @@
-from celery import task
-
 import os
-import sys
 import subprocess
 import time
 
+from celery import task
+from django.conf import settings
+
 from kraken import tsung
+
 
 @task()
 def run_test(test, test_xml):
@@ -24,13 +25,15 @@ def run_test(test, test_xml):
     testfh.write(test_xml)
     testfh.close()
 
-    args = ['/usr/bin/tsung', '-f', testfile, '-l', testlog, 'start']
+    args = [settings.TSUNG_EXECUTABLE, '-f', testfile, '-l', testlog, 'start']
 
     print args
-    
+
     # Execute tsung
-    test_runner = subprocess.Popen(args,
-        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env={"HOME":os.getcwd()})
+    test_runner = subprocess.Popen(
+        args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env={
+            "HOME": os.getcwd(),
+        })
     test_runner.wait()
 
     test.stdout = test_runner.stdout.read()

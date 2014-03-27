@@ -218,6 +218,8 @@ SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap'
 
+TSUNG_EXECUTABLE = '/usr/bin/tsung'
+
 try:
     from local_settings import *
 except ImportError:
