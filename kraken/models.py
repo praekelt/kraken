@@ -59,6 +59,8 @@ class Request(models.Model):
     content = models.CharField(max_length=255)
 
     dyn_variable = models.CharField(max_length=255)
+    dyn_variable_attr = models.CharField(max_length=255, null=True)
+    dyn_variable_attr_value = models.CharField(max_length=255, null=True)
 
     content_type = models.CharField(max_length=255)
 
@@ -151,9 +153,12 @@ def generate_config_xml(profile):
             url = request.path
 
         if request.dyn_variable:
-            request_tag.append(
-                etree.Element('dyn_variable', name=request.dyn_variable)
-            )
+            dyn_variable = etree.Element(
+                'dyn_variable', name=request.dyn_variable)
+            if request.dyn_variable_attr:
+                dyn_variable.set(
+                    request.dyn_variable_attr, request.dyn_variable_attr_value)
+            request_tag.append(dyn_variable)
 
         if request.method == 'POST':
             request_tag.append(etree.Element(

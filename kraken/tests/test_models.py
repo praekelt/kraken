@@ -4,7 +4,7 @@ from kraken import models
 
 
 class TestGenerateConfig(TestCase):
-    def make_profile(self, name='testprofile', url='http://example.com',
+    def make_profile(self, name='testgc', url='http://example.com',
                      phase_duration=1, phase_rate=1):
         profile = models.Profile(
             name=name, url=url, phase_duration=phase_duration, phase_rate=1)
@@ -38,8 +38,7 @@ class TestGenerateConfig(TestCase):
             '    <option name="user_agent" type="ts_http"/>',
             '  </options>',
             '  <sessions>',
-            ('    <session name="testprofile" probability="100"'
-             ' type="ts_http"/>'),
+            '    <session name="testgc" probability="100" type="ts_http"/>',
             '  </sessions>',
             '</tsung>',
         ])
@@ -64,8 +63,7 @@ class TestGenerateConfig(TestCase):
             '    <option name="user_agent" type="ts_http"/>',
             '  </options>',
             '  <sessions>',
-            ('    <session name="testprofile" probability="100"'
-             ' type="ts_http">'),
+            '    <session name="testgc" probability="100" type="ts_http">',
             '      <thinktime random="true" value="1"/>',
             '      <request>',
             '        <http method="" url="http://example.com" version="1.1"/>',
@@ -95,11 +93,43 @@ class TestGenerateConfig(TestCase):
             '    <option name="user_agent" type="ts_http"/>',
             '  </options>',
             '  <sessions>',
-            ('    <session name="testprofile" probability="100"'
-             ' type="ts_http">'),
+            '    <session name="testgc" probability="100" type="ts_http">',
             '      <thinktime random="true" value="1"/>',
             '      <request>',
             '        <dyn_variable name="foo"/>',
+            '        <http method="" url="http://example.com" version="1.1"/>',
+            '      </request>',
+            '    </session>',
+            '  </sessions>',
+            '</tsung>',
+        ])
+
+    def test_request_dyn_variable_jsonpath(self):
+        profile = self.make_profile()
+        self.add_request(
+            profile, dyn_variable='foo', dyn_variable_attr='jsonpath',
+            dyn_variable_attr_value="foo.bar")
+        xml = models.generate_config_xml(profile)
+        self.assertXML(xml, [
+            '<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">',
+            '<tsung loglevel="notice" version="1.0">',
+            '  <clients/>',
+            '  <servers>',
+            '    <server host="example.com" port="80" type="tcp"/>',
+            '  </servers>',
+            '  <load>',
+            '    <arrivalphase duration="1" phase="1" unit="minute">',
+            '      <users interarrival="0.00" unit="second"/>',
+            '    </arrivalphase>',
+            '  </load>',
+            '  <options>',
+            '    <option name="user_agent" type="ts_http"/>',
+            '  </options>',
+            '  <sessions>',
+            '    <session name="testgc" probability="100" type="ts_http">',
+            '      <thinktime random="true" value="1"/>',
+            '      <request>',
+            '        <dyn_variable name="foo" jsonpath="foo.bar"/>',
             '        <http method="" url="http://example.com" version="1.1"/>',
             '      </request>',
             '    </session>',
