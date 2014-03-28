@@ -58,6 +58,8 @@ class Request(models.Model):
     method = models.CharField(max_length=5)
     content = models.CharField(max_length=255)
 
+    substitution = models.BooleanField()
+
     dyn_variable = models.CharField(max_length=255)
     dyn_variable_attr = models.CharField(max_length=255, null=True)
     dyn_variable_attr_value = models.CharField(max_length=255, null=True)
@@ -144,6 +146,9 @@ def generate_config_xml(profile):
     first_request = True
     for request in profile.request_set.all():
         request_tag = etree.Element('request')
+
+        if request.substitution:
+            request_tag.set('subst', 'true')
 
         if first_request:
             # Add the whole path

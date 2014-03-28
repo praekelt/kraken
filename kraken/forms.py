@@ -83,6 +83,8 @@ class ProfileRequest(forms.ModelForm):
     content = forms.CharField(required=False)
     content_type = forms.CharField(required=False)
 
+    substitution = forms.BooleanField(required=False)
+
     dyn_variable = forms.CharField(required=False)
     dyn_variable_attr = forms.CharField(required=False)
     dyn_variable_attr_value = forms.CharField(required=False)
