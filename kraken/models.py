@@ -160,13 +160,19 @@ def generate_config_xml(profile):
                     request.dyn_variable_attr, request.dyn_variable_attr_value)
             request_tag.append(dyn_variable)
 
+        http = etree.Element(
+            'http', url=url, version='1.1', method=request.method)
+
         if request.method == 'POST':
-            request_tag.append(etree.Element(
-                'http', url=url, version='1.1', method='POST',
-                content_type=request.content_type, contents=request.content))
-        else:
-            request_tag.append(etree.Element(
-                'http', url=url, version='1.1', method=request.method))
+            http.set('content_type', request.content_type)
+            http.set('contents', request.content)
+
+        if request.http_auth:
+            http.append(etree.Element(
+                'www_authenticate', userid=request.username,
+                passwd=request.password))
+
+        request_tag.append(http)
 
         if request.think_time:
             think_tag = etree.Element(
