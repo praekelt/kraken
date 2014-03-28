@@ -75,7 +75,9 @@ class ProfileRequest(forms.ModelForm):
     method = forms.ChoiceField(required=True, initial="GET",
         choices=(
             ('GET', 'GET'),
-            ('POST', 'POST')
+            ('POST', 'POST'),
+            ('PUT', 'PUT'),
+            ('DELETE', 'DELETE'),
         )
     )
     content = forms.CharField(required=False)

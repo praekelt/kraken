@@ -163,7 +163,7 @@ def generate_config_xml(profile):
         http = etree.Element(
             'http', url=url, version='1.1', method=request.method)
 
-        if request.method == 'POST':
+        if request.method in ('PUT', 'POST'):
             http.set('content_type', request.content_type)
             http.set('contents', request.content)
 

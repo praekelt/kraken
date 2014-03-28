@@ -22,7 +22,7 @@
 
         function methodChanged(){
             var method = $("#id_method").val();
-            if (method == "POST") {
+            if (method == "POST" || method == "PUT") {
                 $("#div_id_content").show()
                 $("#div_id_content_type").show();
             }
