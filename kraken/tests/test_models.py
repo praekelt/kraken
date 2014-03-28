@@ -235,3 +235,33 @@ class TestGenerateConfig(TestCase):
             '  </sessions>',
             '</tsung>',
         ])
+
+    def test_request_subst(self):
+        profile = self.make_profile()
+        self.add_request(profile, substitution=True)
+        xml = models.generate_config_xml(profile)
+        self.assertXML(xml, [
+            '<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">',
+            '<tsung loglevel="notice" version="1.0">',
+            '  <clients/>',
+            '  <servers>',
+            '    <server host="example.com" port="80" type="tcp"/>',
+            '  </servers>',
+            '  <load>',
+            '    <arrivalphase duration="1" phase="1" unit="minute">',
+            '      <users interarrival="0.00" unit="second"/>',
+            '    </arrivalphase>',
+            '  </load>',
+            '  <options>',
+            '    <option name="user_agent" type="ts_http"/>',
+            '  </options>',
+            '  <sessions>',
+            '    <session name="testgc" probability="100" type="ts_http">',
+            '      <thinktime random="true" value="1"/>',
+            '      <request subst="true">',
+            '        <http method="" url="http://example.com" version="1.1"/>',
+            '      </request>',
+            '    </session>',
+            '  </sessions>',
+            '</tsung>',
+        ])
